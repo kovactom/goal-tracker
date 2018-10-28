@@ -4,5 +4,8 @@
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
+    <style name="ElementSpacing">
+        <item name="android:layout_marginTop">24dp</item>
+    </style>
 
 </resources>
