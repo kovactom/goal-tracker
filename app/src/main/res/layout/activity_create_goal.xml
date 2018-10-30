@@ -37,6 +37,7 @@
                 app:hintEnabled="true">
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/cg_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cg_tw_name" />
@@ -48,6 +49,7 @@
                 android:layout_height="wrap_content">
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/cg_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cg_tw_location" />
@@ -66,7 +68,7 @@
                     android:text="@string/cg_tw_category" />
 
                 <Spinner
-                    android:id="@+id/spinner"
+                    android:id="@+id/cg_category"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="360dp"
                     android:layout_height="wrap_content"
@@ -88,10 +90,12 @@
 
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/cg_from"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="@string/cg_tw_from" />
+                        android:hint="@string/cg_tw_from"
+                        android:focusable="false"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -100,10 +104,12 @@
                     android:orientation="vertical">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/cg_to"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="@string/cg_tw_to" />
+                        android:hint="@string/cg_tw_to"
+                        android:focusable="false"/>
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -116,6 +122,7 @@
                 app:hintEnabled="true">
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/cg_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/cg_tw_time" />
@@ -134,7 +141,7 @@
                     android:text="@string/cg_tw_repeat" />
 
                 <Spinner
-                    android:id="@+id/spinner2"
+                    android:id="@+id/cg_repeat"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="360dp"
                     android:layout_height="wrap_content"
@@ -156,7 +163,7 @@
                     android:text="@string/cg_tw_notification" />
 
                 <Spinner
-                    android:id="@+id/spinner3"
+                    android:id="@+id/cg_notification"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="360dp"
                     android:layout_height="wrap_content"
@@ -190,6 +197,7 @@
                     app:hintEnabled="true">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/cg_duration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/cg_tw_duration" />
@@ -221,6 +229,7 @@
                     app:hintEnabled="true">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/cg_picture"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/cg_tw_picture" />
