@@ -2,11 +2,15 @@ package com.vsb.tamz.goaltracker;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-public class CreateGoalActivity extends Activity {
+public class CreateGoalActivity extends AppCompatActivity {
 
+    private Toolbar toolbar;
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
     private Spinner notificationSpinner;
@@ -16,11 +20,19 @@ public class CreateGoalActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_goal);
 
+        toolbar = findViewById(R.id.toolbar);
         categorySpinner = findViewById(R.id.spinner);
         repeatSpinner = findViewById(R.id.spinner2);
         notificationSpinner = findViewById(R.id.spinner3);
 
+        setSupportActionBar(toolbar);
         init();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.getMenuInflater().inflate(R.menu.menu_create_goal, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     private void init() {
