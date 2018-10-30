@@ -5,9 +5,8 @@
     <string name="cg_tw_location">Location</string>
     <string name="cg_tw_category">Category</string>
     <string name="cg_tw_from">From</string>
-    <string name="cg_tw_from_time">Time</string>
     <string name="cg_tw_to">To</string>
-    <string name="cg_tw_to_time">Time</string>
+    <string name="cg_tw_time">Time</string>
     <string name="cg_tw_repeat">Repeat</string>
     <string name="cg_tw_notification">Notification</string>
     <string name="cg_tw_duration">Duration</string>
