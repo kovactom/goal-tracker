@@ -3,14 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_discard"
+        android:id="@+id/cg_action_discard"
         android:icon="@drawable/ic_baseline_clear_24px"
         android:title="@string/cg_mi_discard"
         app:showAsAction="ifRoom"
         />
 
     <item
-        android:id="@+id/action_save"
+        android:id="@+id/cg_action_save"
         android:icon="@drawable/ic_baseline_save_24px"
         android:title="@string/cg_mi_save"
         app:showAsAction="ifRoom"/>

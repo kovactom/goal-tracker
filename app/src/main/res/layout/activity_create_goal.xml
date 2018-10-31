@@ -125,7 +125,9 @@
                     android:id="@+id/cg_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/cg_tw_time" />
+                    android:hint="@string/cg_tw_time"
+                    android:focusable="false"
+                    android:inputType="time"/>
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -200,7 +202,8 @@
                         android:id="@+id/cg_duration"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/cg_tw_duration" />
+                        android:hint="@string/cg_tw_duration"
+                        android:inputType="time"/>
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
@@ -232,7 +235,8 @@
                         android:id="@+id/cg_picture"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/cg_tw_picture" />
+                        android:hint="@string/cg_tw_picture"
+                        android:focusable="false" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
         </LinearLayout>
