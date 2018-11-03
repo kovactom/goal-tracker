@@ -32,4 +32,9 @@
         <item>1 hour</item>
         <item>1 day</item>
     </string-array>
+
+    <string name="o_mi_all">All</string>
+    <string name="o_mi_today">Today</string>
+    <string name="o_mi_settings">Settings</string>
+    <string name="o_mh_menu">Goal Tracker</string>
 </resources>
