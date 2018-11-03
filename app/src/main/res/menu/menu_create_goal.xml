@@ -6,6 +6,7 @@
         android:id="@+id/cg_action_discard"
         android:icon="@drawable/ic_baseline_clear_24px"
         android:title="@string/cg_mi_discard"
+        android:onClick="discard"
         app:showAsAction="ifRoom"
         />
 
@@ -13,6 +14,7 @@
         android:id="@+id/cg_action_save"
         android:icon="@drawable/ic_baseline_save_24px"
         android:title="@string/cg_mi_save"
+        android:onClick="save"
         app:showAsAction="ifRoom"/>
 
 </menu>

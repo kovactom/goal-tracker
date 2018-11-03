@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -44,6 +43,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     private EditText timeText;
     private EditText durationText;
     private EditText pictureSrcText;
+    private Uri pictureSrc;
     private int currentOpenedDatePicker;
 
     @Override
@@ -173,6 +173,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
             try(Cursor cursor = getContentResolver().query(uri, null, null, null, null, null)) {
                 if (cursor != null && cursor.moveToNext()) {
                     String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                    pictureSrc = uri;
                     pictureSrcText.setText(displayName);
                 }
             }
@@ -208,5 +209,13 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         fromText.setText(dateFormat.format(new Date()));
         toText.setText(dateFormat.format(new Date()));
         timeText.setText(timeFormat.format(new Date()));
+    }
+
+    public void save(MenuItem item) {
+
+    }
+
+    public void discard(MenuItem item) {
+        finish();
     }
 }
