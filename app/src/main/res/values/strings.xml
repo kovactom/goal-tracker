@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">GoalTracker</string>
+    <string name="title_activity_create_goal">New goal</string>
+    <string name="cg_tw_name">Name</string>
+    <string name="cg_tw_location">Location</string>
+    <string name="cg_tw_category">Category</string>
+    <string name="cg_tw_from">From</string>
+    <string name="cg_tw_to">To</string>
+    <string name="cg_tw_time">Time</string>
+    <string name="cg_tw_repeat">Repeat</string>
+    <string name="cg_tw_notification">Notification</string>
+    <string name="cg_tw_duration">Duration</string>
+    <string name="cg_tw_picture">Picture</string>
+    <string name="cg_cd_timer">Timer</string>
+    <string name="cg_cd_attachment">Attachment</string>
+    <string name="cg_mi_save">Save</string>
+    <string name="cg_mi_discard">Discard</string>
+    <string-array name="cg_sp_category">
+        <item>Hobby</item>
+        <item>Sport</item>
+        <item>School</item>
+        <item>Work</item>
+        <item>Entertainment</item>
+    </string-array>
+    <string-array name="cg_sp_repeat">
+        <item>Every day</item>
+        <item>Every week</item>
+        <item>Every month</item>
+    </string-array>
+    <string-array name="cg_sp_notification">
+        <item>10 minutes</item>
+        <item>1 hour</item>
+        <item>1 day</item>
+    </string-array>
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/cg_action_discard"
+        android:icon="@drawable/ic_baseline_clear_24px"
+        android:title="@string/cg_mi_discard"
+        android:onClick="discard"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/cg_action_save"
+        android:icon="@drawable/ic_baseline_save_24px"
+        android:title="@string/cg_mi_save"
+        android:onClick="save"
+        app:showAsAction="ifRoom"/>
+
+</menu>
