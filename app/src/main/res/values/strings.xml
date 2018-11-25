@@ -37,4 +37,7 @@
     <string name="o_mi_today">Today</string>
     <string name="o_mi_settings">Settings</string>
     <string name="o_mh_menu">Goal Tracker</string>
+    <string name="o_mi_menu">Menu</string>
+    <string name="o_mi_options">Options</string>
+    <string name="o_mi_refresh">Refresh</string>
 </resources>

@@ -4,15 +4,15 @@
 
     <item
         android:id="@+id/o_refresh"
-        android:icon="@drawable/ic_baseline_menu_24px"
-        android:title="@string/cg_mi_discard"
+        android:icon="@drawable/ic_baseline_refresh_24px"
+        android:title="@string/o_mi_refresh"
         app:showAsAction="ifRoom"
         />
 
     <item
-        android:id="@+id/o_menu"
+        android:id="@+id/o_options"
         android:icon="@drawable/ic_baseline_more_vert_24px"
-        android:title="@string/cg_mi_save"
+        android:title="@string/o_mi_options"
         app:showAsAction="ifRoom"/>
 
 </menu>
