@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
@@ -24,11 +26,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class OverviewActivity extends AppCompatActivity {
+public class OverviewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private AlarmManager alarmManager;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private ListView cardListView;
 
     @Override
@@ -41,6 +44,7 @@ public class OverviewActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.overview_toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
         cardListView = findViewById(R.id.cardListView);
 
         setSupportActionBar(toolbar);
@@ -48,6 +52,7 @@ public class OverviewActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24px);
 
+        navigationView.setNavigationItemSelectedListener(this);
 
         List<GoalCard> data = new ArrayList<>();
         data.add(new GoalCard("Learn programming", "Every day", "30 minutes", "120 / 240 minutes"));
@@ -85,6 +90,18 @@ public class OverviewActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.nav_settings: {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+            }break;
+
+        }
+        return true;
     }
 
     public void createNewGoal(View view) {

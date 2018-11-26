@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout="@layout/activity_settings">
+
+    <PreferenceCategory android:title="Notifications preferences">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="notifications"
+            android:title="Notifications"
+            android:summary="Enable/disable notifications for all planned goals."/>
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Help">
+        <Preference
+            app:key="feedback"
+            app:summary="Report technical issues or suggest new features"
+            app:title="Send feedback" />
+        <Preference
+            app:key="statistics"
+            app:summary="Send anonymous usage statistics like goal count, your preferences etc."
+            app:title="Send anonymous statistics"/>
+    </PreferenceCategory>
+</PreferenceScreen>
