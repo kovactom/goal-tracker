@@ -27,13 +27,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:src="@drawable/green_gradient"
-                android:contentDescription="desc"/>
+                android:contentDescription="@string/o_iw_goal_image_desc"/>
 
             <TextView
                 android:id="@+id/goalName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Learn programming"
+                android:text="@string/o_tw_goal_name"
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="12dp"
                 android:textSize="24sp"
@@ -48,13 +48,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_refresh_black_24px"
-                    android:contentDescription="something" />
+                    android:contentDescription="@string/o_iw_refresh_desc" />
 
                 <TextView
                     android:id="@+id/goalRepeat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Every day"
+                    android:text="@string/o_tw_refresh"
                     android:layout_marginStart="34dp" />
             </RelativeLayout>
 
@@ -67,13 +67,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_timer_24px"
-                    android:contentDescription="something"/>
+                    android:contentDescription="@string/o_iw_duration_desc"/>
 
                 <TextView
                     android:id="@+id/goalDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="30 minutes"
+                    android:text="@string/o_tw_duration"
                     android:layout_marginStart="34dp" />
             </RelativeLayout>
 
@@ -86,14 +86,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_timeline_24px"
-                    android:contentDescription="something"/>
+                    android:contentDescription="@string/o_iw_score_desc"/>
 
                 <TextView
                     android:id="@+id/goalScore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="120 / 240 minutes"
+                    android:text="@string/o_tw_score"
                     android:layout_marginStart="34dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/o_bt_done"
+                    android:textColor="@color/colorOrange"
+                    android:layout_alignParentEnd="true"/>
             </RelativeLayout>
 
         </LinearLayout>

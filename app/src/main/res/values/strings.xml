@@ -40,4 +40,15 @@
     <string name="o_mi_menu">Menu</string>
     <string name="o_mi_options">Options</string>
     <string name="o_mi_refresh">Refresh</string>
+    <string name="o_iw_goal_image_desc">Goal image</string>
+    <string name="o_tw_goal_name">Learn programming</string>
+    <string name="o_iw_refresh_desc">Refresh icon</string>
+    <string name="o_tw_refresh">Every day</string>
+    <string name="o_iw_duration_desc">Duration icon</string>
+    <string name="o_tw_duration">30 minutes</string>
+    <string name="o_iw_score_desc">Timeline icon</string>
+    <string name="o_tw_score">120 / 240 minutes</string>
+    <string name="o_bt_done">Done</string>
+    <string name="channel_name">Goal tracker notification channel</string>
+    <string name="channel_description">Goal tracker notification channel</string>
 </resources>
