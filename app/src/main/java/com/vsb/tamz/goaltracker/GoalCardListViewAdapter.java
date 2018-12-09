@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class GoalCardListViewAdapter extends ArrayAdapter<GoalCard> {
             cardModel.repeat = row.findViewById(R.id.goalRepeat);
             cardModel.duration = row.findViewById(R.id.goalDuration);
             cardModel.score = row.findViewById(R.id.goalScore);
+            cardModel.doneButton = row.findViewById(R.id.doneButton);
 
             row.setTag(cardModel);
         } else {
@@ -50,6 +52,7 @@ public class GoalCardListViewAdapter extends ArrayAdapter<GoalCard> {
         cardModel.repeat.setText(entry.getRepeat());
         cardModel.duration.setText(entry.getDuration());
         cardModel.score.setText(entry.getScore());
+        cardModel.doneButton.setVisibility(entry.isActive() ? Button.VISIBLE : Button.INVISIBLE);
 
         return row;
     }
@@ -60,5 +63,6 @@ public class GoalCardListViewAdapter extends ArrayAdapter<GoalCard> {
         TextView repeat;
         TextView duration;
         TextView score;
+        Button doneButton;
     }
 }

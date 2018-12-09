@@ -102,6 +102,7 @@
 
                 <Button
                     style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:id="@+id/doneButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/o_bt_done"

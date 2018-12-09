@@ -5,12 +5,14 @@ public class GoalCard {
     private String repeat;
     private String duration;
     private String score;
+    private boolean active;
 
-    public GoalCard(String name, String repeat, String duration, String score) {
+    public GoalCard(String name, String repeat, String duration, String score, boolean active) {
         this.name = name;
         this.repeat = repeat;
         this.duration = duration;
         this.score = score;
+        this.active = active;
     }
 
     public String getName() {
@@ -43,5 +45,13 @@ public class GoalCard {
 
     public void setScore(String score) {
         this.score = score;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
