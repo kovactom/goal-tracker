@@ -10,7 +10,7 @@ import com.vsb.tamz.goaltracker.persistence.converters.Converters;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
 import com.vsb.tamz.goaltracker.persistence.model.GoalProgress;
 
-@Database(entities = {Goal.class, GoalProgress.class}, version = 4)
+@Database(entities = {Goal.class, GoalProgress.class}, version = 5)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;

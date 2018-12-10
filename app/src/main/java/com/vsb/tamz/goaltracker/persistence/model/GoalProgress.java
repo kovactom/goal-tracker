@@ -12,7 +12,7 @@ public class GoalProgress {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    @ColumnInfo(name = "date")
+    @ColumnInfo(name = "done_date")
     private Date date;
 
     @ColumnInfo(name = "goal_id")

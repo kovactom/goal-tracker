@@ -4,9 +4,11 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 @Entity
 public class Goal {
@@ -77,15 +79,53 @@ public class Goal {
                 return currentDate.getTimeInMillis() >= from.getTime() && currentDate.getTimeInMillis() <= to.getTime();
             }
             case 1: {
-                return targetDate.get(Calendar.DAY_OF_WEEK) == currentDate.get(Calendar.DAY_OF_WEEK);
+                return targetDate.get(Calendar.DAY_OF_WEEK) == currentDate.get(Calendar.DAY_OF_WEEK) &&
+                        (currentDate.getTimeInMillis() >= from.getTime() && currentDate.getTimeInMillis() <= to.getTime());
             }
             case 2: {
-                return targetDate.get(Calendar.DAY_OF_MONTH) == currentDate.get(Calendar.DAY_OF_MONTH);
+                return targetDate.get(Calendar.DAY_OF_MONTH) == currentDate.get(Calendar.DAY_OF_MONTH) &&
+                        (currentDate.getTimeInMillis() >= from.getTime() && currentDate.getTimeInMillis() <= to.getTime());
             }
         }
 
         return false;
     }
+
+    public List<GregorianCalendar> generateGoalDays() {
+        int unit = 0;
+        int minutesBefore = 0;
+
+        switch ((int) repeatId) {
+            case 0: unit = GregorianCalendar.DAY_OF_YEAR;break;
+            case 1: unit = GregorianCalendar.DAY_OF_WEEK;break;
+            case 2: unit = GregorianCalendar.MONTH;break;
+        }
+
+        switch ((int) notificationId) {
+            case 0: minutesBefore = -10;break;
+            case 1: minutesBefore = -60;break;
+            case 2: minutesBefore = -180;break;
+        }
+
+        long unitsBetween = getUnitsBetweenDates();
+        List<GregorianCalendar> days = new ArrayList<>();
+
+        GregorianCalendar dayTime = new GregorianCalendar();
+        dayTime.setTime(time);
+        dayTime.add(Calendar.MINUTE, minutesBefore);
+
+        for (int i = 0; i < unitsBetween; i++) {
+            GregorianCalendar startDay = new GregorianCalendar();
+            startDay.setTime(from);
+            startDay.set(Calendar.HOUR_OF_DAY, dayTime.get(Calendar.HOUR_OF_DAY));
+            startDay.set(Calendar.MINUTE, dayTime.get(Calendar.MINUTE));
+            startDay.add(unit, i);
+            days.add(startDay);
+        }
+
+        return days;
+    }
+
 
 
     public long getId() {

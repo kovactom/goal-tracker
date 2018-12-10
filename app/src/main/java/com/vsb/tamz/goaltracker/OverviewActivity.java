@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -24,7 +23,10 @@ import android.widget.ListView;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.model.GoalProgress;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,7 +39,6 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
     public static final int CREATE_GOAL_REQUEST_CODE = 2;
 
     private AppDatabase db;
-    private AlarmManager alarmManager;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -47,9 +48,7 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overview);
-        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         this.createNotificationChannel();
-        this.scheduleNotifications();
 
         toolbar = findViewById(R.id.overview_toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -67,8 +66,9 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
         final String[] repeats = getResources().getStringArray(R.array.cg_sp_repeat);
         List<GoalCard> data = new ArrayList<>();
         for(Goal val : goals) {
+            List<GoalProgress> goalProgresses = db.goalProgressDao().findAllByGoalId(val.getId());
             long doneUnits = db.goalProgressDao().getCountByGoalId(val.getId());
-            boolean active = val.isTodayGoal();
+            boolean active = val.isTodayGoal() && !containsTodayProgress(goalProgresses);
             data.add(new GoalCard(val.getId(), val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", val.getScore(doneUnits) + "/" + val.getMaximumScore() + " minutes", active));
         }
 
@@ -76,16 +76,13 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
         cardListView.setAdapter(adapter);
     }
 
-    private void scheduleNotifications() {
-        Intent intent = new Intent(getApplicationContext(), GoalNotificationBroadcaster.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 17);
-        calendar.set(Calendar.MINUTE, 52);
-        calendar.set(Calendar.SECOND, 30);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+    private boolean containsTodayProgress(List<GoalProgress> goalProgresses) {
+        DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
+        String currentDate = dateFormat.format(new Date());
+        for(GoalProgress val : goalProgresses) {
+            return dateFormat.format(val.getDate()).equals(currentDate);
+        }
+        return false;
     }
 
     @Override

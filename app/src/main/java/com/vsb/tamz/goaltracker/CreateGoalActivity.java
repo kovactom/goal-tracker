@@ -1,9 +1,12 @@
 package com.vsb.tamz.goaltracker;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -30,6 +33,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class CreateGoalActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -40,6 +44,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
     DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
 
+    private AlarmManager alarmManager;
     private AppDatabase db;
     private Toolbar toolbar;
     private Spinner categorySpinner;
@@ -62,6 +67,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_goal);
+        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 
         toolbar = findViewById(R.id.toolbar);
         categorySpinner = findViewById(R.id.cg_category);
@@ -247,6 +253,16 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         timeText.setText(timeFormat.format(new Date()));
     }
 
+    private void scheduleNotifications() {
+        for (GregorianCalendar day : goal.generateGoalDays()) {
+            Intent intent = new Intent(getApplicationContext(), GoalNotificationBroadcaster.class);
+            intent.putExtra("goalName", goal.getName());
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) (goal.getId() * 1_000_0000 + day.get(Calendar.DAY_OF_YEAR)), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, day.getTimeInMillis(), alarmIntent);
+        }
+    }
+
     public void save(MenuItem item) {
 
         try {
@@ -266,6 +282,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        scheduleNotifications();
         finish();
     }
 
