@@ -3,6 +3,7 @@ package com.vsb.tamz.goaltracker;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,10 +22,14 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.vsb.tamz.goaltracker.persistence.AppDatabase;
+import com.vsb.tamz.goaltracker.persistence.model.Goal;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class CreateGoalActivity extends AppCompatActivity implements View.OnClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -212,7 +217,28 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void save(MenuItem item) {
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
 
+        try {
+            Goal goal = new Goal();
+            goal.setName(nameText.getText().toString());
+            goal.setLocation(locationText.getText().toString());
+            goal.setCategoryId(categorySpinner.getSelectedItemId());
+            goal.setFrom(dateFormat.parse(fromText.getText().toString()));
+            goal.setTo(dateFormat.parse(toText.getText().toString()));
+            goal.setTime(timeFormat.parse(timeText.getText().toString()));
+            goal.setRepeatId(repeatSpinner.getSelectedItemId());
+            goal.setNotificationId(notificationSpinner.getSelectedItemId());
+            goal.setDuration(Long.parseLong(durationText.getText().toString()));
+            goal.setPicture(pictureSrc != null ? pictureSrc.toString() : null);
+
+            AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "goals").allowMainThreadQueries().build();
+            db.goalDao().insert(goal);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        finish();
     }
 
     public void discard(MenuItem item) {
