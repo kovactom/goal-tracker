@@ -4,7 +4,9 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 @Entity
 public class Goal {
@@ -20,10 +22,10 @@ public class Goal {
     @ColumnInfo(name = "category_id")
     private long categoryId;
 
-    @ColumnInfo(name = "from")
+    @ColumnInfo(name = "date_from")
     private Date from;
 
-    @ColumnInfo(name = "to")
+    @ColumnInfo(name = "date_to")
     private Date to;
 
     @ColumnInfo(name = "time")
@@ -40,6 +42,51 @@ public class Goal {
 
     @ColumnInfo(name = "picture")
     private String picture;
+
+    public long getScore(long doneUnits) {
+        return doneUnits * duration;
+    }
+
+    public long getMaximumScore() {
+        long unitsBetween = getUnitsBetweenDates();
+        return unitsBetween * duration;
+    }
+
+    public long getUnitsBetweenDates() {
+        long diff = to.getTime() - from.getTime();
+        switch ((int) repeatId) {
+            case 0: {
+                return diff / (1000L * 60 * 60 * 24 );
+            }
+            case 1: {
+                return diff / (1000L * 60 * 60 * 24 * 7);
+            }
+            case 2: {
+                return diff / (1000L * 60 * 60 * 24 * 30);
+            }
+        }
+        return 0;
+    }
+
+    public boolean isTodayGoal() {
+        GregorianCalendar targetDate = new GregorianCalendar();
+        GregorianCalendar currentDate = new GregorianCalendar();
+        targetDate.setTime(from);
+        switch ((int) repeatId) {
+            case 0: {
+                return currentDate.getTimeInMillis() >= from.getTime() && currentDate.getTimeInMillis() <= to.getTime();
+            }
+            case 1: {
+                return targetDate.get(Calendar.DAY_OF_WEEK) == currentDate.get(Calendar.DAY_OF_WEEK);
+            }
+            case 2: {
+                return targetDate.get(Calendar.DAY_OF_MONTH) == currentDate.get(Calendar.DAY_OF_MONTH);
+            }
+        }
+
+        return false;
+    }
+
 
     public long getId() {
         return id;

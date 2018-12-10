@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,6 +32,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final int GOAL_DETAIL_REQUEST_CODE = 1;
+    public static final int CREATE_GOAL_REQUEST_CODE = 2;
 
     private AppDatabase db;
     private AlarmManager alarmManager;
@@ -58,61 +62,18 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
         actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24px);
 
         navigationView.setNavigationItemSelectedListener(this);
-        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "goals").fallbackToDestructiveMigration().allowMainThreadQueries().build();
+        db = AppDatabase.getDatabase(this);
         List<Goal> goals = db.goalDao().findAll();
         final String[] repeats = getResources().getStringArray(R.array.cg_sp_repeat);
         List<GoalCard> data = new ArrayList<>();
         for(Goal val : goals) {
-            long doneGoalSteps = db.goalProgressDao().getCountByGoalId(val.getId());
-            long duration = doneGoalSteps * val.getDuration();
-            long unitsBetween = getUnitsBetweenDates(val.getFrom(), val.getTo(), (int) val.getRepeatId());
-            long totalDuration = unitsBetween * val.getDuration();
-            boolean active = isTodayGoal(val.getFrom(), val.getTo(), (int) val.getRepeatId());
-            data.add(new GoalCard(val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", duration + "/" + totalDuration + " minutes", active));
+            long doneUnits = db.goalProgressDao().getCountByGoalId(val.getId());
+            boolean active = val.isTodayGoal();
+            data.add(new GoalCard(val.getId(), val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", val.getScore(doneUnits) + "/" + val.getMaximumScore() + " minutes", active));
         }
-//        List<GoalCard> data = new ArrayList<>();
-//        data.add(new GoalCard("Learn programming", "Every day", "30 minutes", "120 / 240 minutes"));
-//        data.add(new GoalCard("Learn foreign language", "Every week", "60 minutes", "60 / 480 minutes"));
-//        data.add(new GoalCard("Train ping-pong", "Every month", "15 minutes", "45 / 520 minutes"));
-//        data.add(new GoalCard("Train cooking", "Every day", "30 minutes", "90 / 900 minutes"));
 
-        GoalCardListViewAdapter adapter = new GoalCardListViewAdapter(getApplicationContext(), R.layout.goal_card_list_view_adapter, data);
+        GoalCardListViewAdapter adapter = new GoalCardListViewAdapter(this, R.layout.goal_card_list_view_adapter, data);
         cardListView.setAdapter(adapter);
-    }
-
-    private long getUnitsBetweenDates(Date from, Date to, int repeatId) {
-        long diff = to.getTime() - from.getTime();
-        switch (repeatId) {
-            case 0: {
-                return diff / (1000L * 60 * 60 * 24 );
-            }
-            case 1: {
-                return diff / (1000L * 60 * 60 * 24 * 7);
-            }
-            case 2: {
-                return diff / (1000L * 60 * 60 * 24 * 30);
-            }
-        }
-        return 0;
-    }
-
-    private boolean isTodayGoal(Date from, Date to, int repeatId) {
-        GregorianCalendar targetDate = new GregorianCalendar();
-        GregorianCalendar currentDate = new GregorianCalendar();
-        targetDate.setTime(from);
-        switch (repeatId) {
-            case 0: {
-                return currentDate.getTimeInMillis() >= from.getTime() && currentDate.getTimeInMillis() <= to.getTime();
-            }
-            case 1: {
-                return targetDate.get(Calendar.DAY_OF_WEEK) == currentDate.get(Calendar.DAY_OF_WEEK);
-            }
-            case 2: {
-                return targetDate.get(Calendar.DAY_OF_MONTH) == currentDate.get(Calendar.DAY_OF_MONTH);
-            }
-        }
-
-        return false;
     }
 
     private void scheduleNotifications() {
@@ -155,9 +116,19 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode) {
+            case CREATE_GOAL_REQUEST_CODE: recreate();break;
+            case GOAL_DETAIL_REQUEST_CODE: recreate();break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     public void createNewGoal(View view) {
         Intent intent = new Intent(this, CreateGoalActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, CREATE_GOAL_REQUEST_CODE);
     }
 
     private void createNotificationChannel() {

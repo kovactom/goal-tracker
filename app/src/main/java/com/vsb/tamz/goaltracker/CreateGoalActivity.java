@@ -37,6 +37,10 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     private static final int TO_DATE_PICKER = 2;
     private static final int FILE_PICKER_OPEN_REQUEST_CODE = 1;
 
+    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+
+    private AppDatabase db;
     private Toolbar toolbar;
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -50,6 +54,9 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     private EditText pictureSrcText;
     private Uri pictureSrc;
     private int currentOpenedDatePicker;
+
+    private Goal goal;
+    private boolean isEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +75,20 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         durationText = findViewById(R.id.cg_duration);
         pictureSrcText = findViewById(R.id.cg_picture);
 
+        db = AppDatabase.getDatabase(this);
+
+        Intent intent = getIntent();
+        isEdit = intent.getBooleanExtra("editMode", false);
+
+        if (isEdit) {
+            long goalId = intent.getLongExtra("goalId", 0);
+            goal = db.goalDao().findOneById(goalId);
+            populateFromObject();
+        } else {
+            goal = new Goal();
+            setDefaultDateTimeValues();
+        }
+
         setSupportActionBar(toolbar);
         init();
     }
@@ -76,6 +97,19 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     public boolean onCreateOptionsMenu(Menu menu) {
         this.getMenuInflater().inflate(R.menu.menu_create_goal, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void populateFromObject() {
+        nameText.setText(goal.getName());
+        locationText.setText(goal.getLocation());
+        categorySpinner.setSelection((int) goal.getCategoryId());
+        fromText.setText(dateFormat.format(goal.getFrom()));
+        toText.setText(dateFormat.format(goal.getTo()));
+        timeText.setText(timeFormat.format(goal.getTime()));
+        repeatSpinner.setSelection((int) goal.getRepeatId());
+        notificationSpinner.setSelection((int) goal.getNotificationId());
+        durationText.setText(Long.toString(goal.getDuration()));
+        pictureSrcText.setText(goal.getPicture());
     }
 
     private void init() {
@@ -90,8 +124,6 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         final ArrayAdapter<CharSequence> notificationArray = ArrayAdapter.createFromResource(this, R.array.cg_sp_notification, android.R.layout.simple_spinner_item);
         notificationArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         notificationSpinner.setAdapter(notificationArray);
-
-        setDefaultDateTimeValues();
 
         fromText.setOnClickListener(this);
         toText.setOnClickListener(this);
@@ -147,8 +179,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, dayOfMonth);
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        String formattedDate = dateFormatter.format(calendar.getTime());
+        String formattedDate = dateFormat.format(calendar.getTime());
 
         switch (currentOpenedDatePicker) {
             case FROM_DATE_PICKER: fromText.setText(formattedDate);break;
@@ -217,11 +248,8 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void save(MenuItem item) {
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
-        DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
 
         try {
-            Goal goal = new Goal();
             goal.setName(nameText.getText().toString());
             goal.setLocation(locationText.getText().toString());
             goal.setCategoryId(categorySpinner.getSelectedItemId());
@@ -233,8 +261,8 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
             goal.setDuration(Long.parseLong(durationText.getText().toString()));
             goal.setPicture(pictureSrc != null ? pictureSrc.toString() : null);
 
-            AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "goals").allowMainThreadQueries().build();
-            db.goalDao().insert(goal);
+            if (isEdit) db.goalDao().update(goal);
+            else db.goalDao().insert(goal);
         } catch (ParseException e) {
             e.printStackTrace();
         }
