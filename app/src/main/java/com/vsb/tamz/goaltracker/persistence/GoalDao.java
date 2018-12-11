@@ -26,4 +26,7 @@ public interface GoalDao {
 
     @Query("SELECT * FROM goal")
     List<Goal> findAll();
+
+    @Query("SELECT COUNT(*) FROM goal")
+    long getGoalCount();
 }

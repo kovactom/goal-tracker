@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.repository.GoalRepository;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ public class GoalDetailActivity extends AppCompatActivity {
 
     private AlarmManager alarmManager;
     private AppDatabase db;
+    private GoalRepository goalRepository;
     private Toolbar toolbar;
     private TextView goalName;
     private TextView goalCategory;
@@ -59,6 +61,7 @@ public class GoalDetailActivity extends AppCompatActivity {
         goalNotification = findViewById(R.id.goalDetailNotification);
 
         db = AppDatabase.getDatabase(this);
+        goalRepository = new GoalRepository(getApplication());
 
         Intent intent = getIntent();
         long goalId = intent.getLongExtra("goalId", 0);
@@ -85,7 +88,7 @@ public class GoalDetailActivity extends AppCompatActivity {
     }
 
     public void delete(MenuItem item) {
-        db.goalDao().delete(goal);
+        goalRepository.delete(goal);
         cancelNotifications();
         finish();
     }

@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.repository.GoalRepository;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,6 +47,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
 
     private AlarmManager alarmManager;
     private AppDatabase db;
+    private GoalRepository goalRepository;
     private Toolbar toolbar;
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -82,6 +84,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         pictureSrcText = findViewById(R.id.cg_picture);
 
         db = AppDatabase.getDatabase(this);
+        goalRepository = new GoalRepository(getApplication());
 
         Intent intent = getIntent();
         isEdit = intent.getBooleanExtra("editMode", false);
@@ -277,8 +280,8 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
             goal.setDuration(Long.parseLong(durationText.getText().toString()));
             goal.setPicture(pictureSrc != null ? pictureSrc.toString() : null);
 
-            if (isEdit) db.goalDao().update(goal);
-            else db.goalDao().insert(goal);
+            if (isEdit) goalRepository.update(goal);
+            else goalRepository.insert(goal);
         } catch (ParseException e) {
             e.printStackTrace();
         }
