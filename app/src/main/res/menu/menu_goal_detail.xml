@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/cg_action_discard"
+        android:icon="@drawable/ic_baseline_delete_24px"
+        android:title="@string/gd_mi_delete"
+        android:onClick="delete"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/cg_action_save"
+        android:icon="@drawable/ic_baseline_edit_24px"
+        android:title="@string/gd_mi_edit"
+        android:onClick="edit"
+        app:showAsAction="ifRoom"/>
+</menu>

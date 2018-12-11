@@ -13,10 +13,11 @@ public class GoalNotificationBroadcaster extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        String goalName = intent.getStringExtra("goalName");
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_timeline_24px)
-                .setContentTitle("Upcoming goal")
+                .setContentTitle("Upcoming goal: " + goalName)
                 .setContentText("Your daily goal is waiting for you!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         notificationManager.notify(5444144, notificationBuilder.build());

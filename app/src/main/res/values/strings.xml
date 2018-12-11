@@ -30,7 +30,7 @@
     <string-array name="cg_sp_notification">
         <item>10 minutes</item>
         <item>1 hour</item>
-        <item>1 day</item>
+        <item>3 hour</item>
     </string-array>
 
     <string name="o_mi_all">All</string>
@@ -51,4 +51,6 @@
     <string name="o_bt_done">Done</string>
     <string name="channel_name">Goal tracker notification channel</string>
     <string name="channel_description">Goal tracker notification channel</string>
+    <string name="gd_mi_delete">Delete</string>
+    <string name="gd_mi_edit">Edit</string>
 </resources>
