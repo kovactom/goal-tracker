@@ -38,6 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:src="@drawable/green_gradient"
+                android:scaleType="fitXY"
                 android:contentDescription="@string/o_iw_goal_image_desc"/>
 
             <TextView

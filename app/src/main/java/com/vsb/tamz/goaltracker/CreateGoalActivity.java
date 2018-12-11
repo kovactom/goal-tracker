@@ -278,7 +278,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
             goal.setRepeatId(repeatSpinner.getSelectedItemId());
             goal.setNotificationId(notificationSpinner.getSelectedItemId());
             goal.setDuration(Long.parseLong(durationText.getText().toString()));
-            goal.setPicture(pictureSrc != null ? pictureSrc.toString() : null);
+            goal.setPicture(pictureSrc != null ? pictureSrc.toString() : pictureSrcText.getText().toString());
 
             if (isEdit) goalRepository.update(goal);
             else goalRepository.insert(goal);

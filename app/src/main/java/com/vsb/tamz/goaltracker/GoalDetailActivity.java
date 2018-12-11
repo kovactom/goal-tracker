@@ -4,12 +4,14 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
@@ -29,6 +31,7 @@ public class GoalDetailActivity extends AppCompatActivity {
     private AppDatabase db;
     private GoalRepository goalRepository;
     private Toolbar toolbar;
+    private ImageView goalPicture;
     private TextView goalName;
     private TextView goalCategory;
     private TextView goalLocation;
@@ -49,6 +52,7 @@ public class GoalDetailActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 
         toolbar = findViewById(R.id.toolbarGoalDetail);
+        goalPicture = findViewById(R.id.goalDetailImage);
         goalName = findViewById(R.id.goalDetailName);
         goalCategory = findViewById(R.id.goalDetailCategory);
         goalLocation = findViewById(R.id.goalDetailLocation);
@@ -123,6 +127,7 @@ public class GoalDetailActivity extends AppCompatActivity {
 
         DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
         DateFormat timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
+        goalPicture.setImageURI(Uri.parse(goal.getPicture()));
         goalName.setText(goal.getName());
         goalCategory.setText(categories[(int) goal.getCategoryId()]);
         goalLocation.setText(goal.getLocation());

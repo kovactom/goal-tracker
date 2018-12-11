@@ -69,7 +69,7 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
             List<GoalProgress> goalProgresses = db.goalProgressDao().findAllByGoalId(val.getId());
             long doneUnits = db.goalProgressDao().getCountByGoalId(val.getId());
             boolean active = val.isTodayGoal() && !containsTodayProgress(goalProgresses);
-            data.add(new GoalCard(val.getId(), val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", val.getScore(doneUnits) + "/" + val.getMaximumScore() + " minutes", active));
+            data.add(new GoalCard(val.getId(), val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", val.getScore(doneUnits) + "/" + val.getMaximumScore() + " minutes", val.getPicture(), active));
         }
 
         GoalCardListViewAdapter adapter = new GoalCardListViewAdapter(this, R.layout.goal_card_list_view_adapter, data);

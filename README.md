@@ -9,5 +9,5 @@ Android application for managment longterm goals.
 *  Progress tracking
 *  Simple statistics
 *  Widget on desktop
-*  Support for uploading image for each goal
+*  Support for uploading picture for each goal
 *  Support for simple gestures
