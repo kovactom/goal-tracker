@@ -1,10 +1,7 @@
 package com.vsb.tamz.goaltracker;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,9 +25,7 @@ import com.vsb.tamz.goaltracker.persistence.model.GoalProgress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,11 +33,15 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
     public static final int GOAL_DETAIL_REQUEST_CODE = 1;
     public static final int CREATE_GOAL_REQUEST_CODE = 2;
 
+    private static final int FILTER_ALL = 1;
+    private static final int FILTER_TODAY = 2;
+
     private AppDatabase db;
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ListView cardListView;
+    private int currentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,18 +61,8 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
 
         navigationView.setNavigationItemSelectedListener(this);
         db = AppDatabase.getDatabase(this);
-        List<Goal> goals = db.goalDao().findAll();
-        final String[] repeats = getResources().getStringArray(R.array.cg_sp_repeat);
-        List<GoalCard> data = new ArrayList<>();
-        for(Goal val : goals) {
-            List<GoalProgress> goalProgresses = db.goalProgressDao().findAllByGoalId(val.getId());
-            long doneUnits = db.goalProgressDao().getCountByGoalId(val.getId());
-            boolean active = val.isTodayGoal() && !containsTodayProgress(goalProgresses);
-            data.add(new GoalCard(val.getId(), val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", val.getScore(doneUnits) + "/" + val.getMaximumScore() + " minutes", val.getPicture(), active));
-        }
 
-        GoalCardListViewAdapter adapter = new GoalCardListViewAdapter(this, R.layout.goal_card_list_view_adapter, data);
-        cardListView.setAdapter(adapter);
+        loadGoalsIntoCards();
     }
 
     private boolean containsTodayProgress(List<GoalProgress> goalProgresses) {
@@ -83,6 +72,23 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
             return dateFormat.format(val.getDate()).equals(currentDate);
         }
         return false;
+    }
+
+    private void loadGoalsIntoCards() {
+        List<Goal> goals = db.goalDao().findAll();
+        List<GoalCard> data = new ArrayList<>();
+        final String[] repeats = getResources().getStringArray(R.array.cg_sp_repeat);
+        for(Goal val : goals) {
+            if (currentFilter == FILTER_TODAY && !val.isTodayGoal()) continue;
+
+            List<GoalProgress> goalProgresses = db.goalProgressDao().findAllByGoalId(val.getId());
+            long doneUnits = db.goalProgressDao().getCountByGoalId(val.getId());
+            boolean active = val.isTodayGoal() && !containsTodayProgress(goalProgresses);
+            data.add(new GoalCard(val.getId(), val.getName(), repeats[(int) val.getRepeatId()], val.getDuration() + " minutes", val.getScore(doneUnits) + "/" + val.getMaximumScore() + " minutes", val.getPicture(), active));
+        }
+        GoalCardListViewAdapter adapter = new GoalCardListViewAdapter(this, R.layout.goal_card_list_view_adapter, data);
+        cardListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -108,7 +114,16 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
             }break;
-
+            case R.id.nav_today: {
+                currentFilter = FILTER_TODAY;
+                loadGoalsIntoCards();
+//                recreate();
+            }break;
+            case R.id.nav_all: {
+                currentFilter = FILTER_ALL;
+                loadGoalsIntoCards();
+//                recreate();
+            }break;
         }
         return true;
     }
