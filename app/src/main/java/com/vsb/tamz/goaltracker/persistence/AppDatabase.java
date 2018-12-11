@@ -8,9 +8,10 @@ import android.content.Context;
 
 import com.vsb.tamz.goaltracker.persistence.converters.Converters;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.model.GoalNotification;
 import com.vsb.tamz.goaltracker.persistence.model.GoalProgress;
 
-@Database(entities = {Goal.class, GoalProgress.class}, version = 5)
+@Database(entities = {Goal.class, GoalProgress.class, GoalNotification.class}, version = 7)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
@@ -32,4 +33,5 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract GoalDao goalDao();
     public abstract GoalProgressDao goalProgressDao();
+    public abstract GoalNotificationDao goalNotificationDao();
 }

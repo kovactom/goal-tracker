@@ -1,15 +1,17 @@
 package com.vsb.tamz.goaltracker.persistence.repository;
 
+import android.app.Application;
 import android.os.AsyncTask;
 
+import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.GoalProgressDao;
 import com.vsb.tamz.goaltracker.persistence.model.GoalProgress;
 
 public class GoalProgressRepository {
     private GoalProgressDao goalProgressDao;
 
-    public GoalProgressRepository(GoalProgressDao goalProgressDao) {
-        this.goalProgressDao = goalProgressDao;
+    public GoalProgressRepository(Application application) {
+        this.goalProgressDao = AppDatabase.getDatabase(application).goalProgressDao();
     }
 
     public void insert(GoalProgress goalProgress) {

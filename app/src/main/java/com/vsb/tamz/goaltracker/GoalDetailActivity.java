@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.model.GoalNotification;
 import com.vsb.tamz.goaltracker.persistence.repository.GoalRepository;
 
 import java.text.DateFormat;
@@ -84,7 +85,7 @@ public class GoalDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
             case EDIT_REQUEST_CODE: {
-                cancelNotifications();
+//                cancelNotifications();
                 recreate();
             }break;
         }
@@ -92,8 +93,8 @@ public class GoalDetailActivity extends AppCompatActivity {
     }
 
     public void delete(MenuItem item) {
-        goalRepository.delete(goal);
         cancelNotifications();
+        goalRepository.delete(goal);
         finish();
     }
 
@@ -112,12 +113,13 @@ public class GoalDetailActivity extends AppCompatActivity {
     }
 
     private void cancelNotifications() {
-        for (GregorianCalendar day : goal.generateGoalDays()) {
+        for (GoalNotification goalNotification : db.goalNotificationDao().findAllByGoalId(goal.getId())) {
             Intent intent = new Intent(getApplicationContext(), GoalNotificationBroadcaster.class);
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) (goal.getId() * 1_000_0000 + day.get(Calendar.DAY_OF_YEAR)), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) goalNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.cancel(alarmIntent);
         }
+        db.goalNotificationDao().deleteByGoalId(goal.getId());
     }
 
     private void populateFromObject() {

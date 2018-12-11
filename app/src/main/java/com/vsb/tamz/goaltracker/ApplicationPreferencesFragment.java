@@ -1,6 +1,11 @@
 package com.vsb.tamz.goaltracker;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -18,13 +23,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
+import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.model.GoalNotification;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +38,8 @@ public class ApplicationPreferencesFragment extends PreferenceFragmentCompat imp
     private AppDatabase db;
     private RequestQueue queue;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private LocationCallback locationCallback;
+    private SharedPreferences sharedPreferences;
+    private AlarmManager alarmManager;
 
     private CheckBoxPreference notifications;
     private Preference sendFeedback;
@@ -52,17 +56,24 @@ public class ApplicationPreferencesFragment extends PreferenceFragmentCompat imp
         db = AppDatabase.getDatabase(getContext());
         queue = Volley.newRequestQueue(getContext());
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 
         notifications.setOnPreferenceClickListener(this);
         sendFeedback.setOnPreferenceClickListener(this);
         sendAnonymousStats.setOnPreferenceClickListener(this);
 
+        loadSharedPreferences();
     }
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         if (preference.equals(notifications)) {
-            Toast.makeText(getContext(), "Notifications ticked: " + notifications.isChecked(), Toast.LENGTH_LONG).show();
+            boolean checked = notifications.isChecked();
+            if (checked) enableAllNotifications();
+            else disableAllNotifications();
+            editor.putBoolean(getString(R.string.sp_enable_notifications), checked);
         } else if (preference.equals(sendFeedback)) {
 
         } else if (preference.equals(sendAnonymousStats)) {
@@ -72,6 +83,8 @@ public class ApplicationPreferencesFragment extends PreferenceFragmentCompat imp
                 fusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), this);
             }
         }
+
+        editor.commit();
         return true;
     }
 
@@ -83,6 +96,11 @@ public class ApplicationPreferencesFragment extends PreferenceFragmentCompat imp
         } else {
             sendAnonymousStatistics(null);
         }
+    }
+
+    private void loadSharedPreferences() {
+        boolean enableNotifications = sharedPreferences.getBoolean(getString(R.string.sp_enable_notifications), false);
+        notifications.setChecked(enableNotifications);
     }
 
     private void sendFeedback() {
@@ -128,5 +146,25 @@ public class ApplicationPreferencesFragment extends PreferenceFragmentCompat imp
     @Override
     public void onSuccess(Location location) {
         sendAnonymousStatistics(location);
+    }
+
+    private void enableAllNotifications() {
+        for (GoalNotification goalNotification : db.goalNotificationDao().findAll()) {
+            Goal goal = db.goalDao().findOneById(goalNotification.getGoalId());
+            Intent intent = new Intent(getContext(), GoalNotificationBroadcaster.class);
+            intent.putExtra("goalName", goal.getName());
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), (int) goalNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, goalNotification.getDate().getTime(), alarmIntent);
+        }
+    }
+
+    private void disableAllNotifications() {
+        for (GoalNotification goalNotification : db.goalNotificationDao().findAll()) {
+            Intent intent = new Intent(getContext(), GoalNotificationBroadcaster.class);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getContext(), (int) goalNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            alarmManager.cancel(alarmIntent);
+        }
     }
 }

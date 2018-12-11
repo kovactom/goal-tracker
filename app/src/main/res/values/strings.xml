@@ -53,4 +53,6 @@
     <string name="channel_description">Goal tracker notification channel</string>
     <string name="gd_mi_delete">Delete</string>
     <string name="gd_mi_edit">Edit</string>
+    
+    <string name="sp_enable_notifications">enable_notifications</string>
 </resources>
