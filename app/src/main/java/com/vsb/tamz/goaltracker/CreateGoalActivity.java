@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -89,7 +90,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
 
         db = AppDatabase.getDatabase(this);
         goalRepository = new GoalRepository(getApplication());
-        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
 
         Intent intent = getIntent();
         isEdit = intent.getBooleanExtra("editMode", false);

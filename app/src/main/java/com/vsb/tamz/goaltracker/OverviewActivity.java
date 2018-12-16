@@ -69,7 +69,7 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
         DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
         String currentDate = dateFormat.format(new Date());
         for(GoalProgress val : goalProgresses) {
-            return dateFormat.format(val.getDate()).equals(currentDate);
+            if (dateFormat.format(val.getDate()).equals(currentDate)) return true;
         }
         return false;
     }
@@ -117,12 +117,14 @@ public class OverviewActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_today: {
                 currentFilter = FILTER_TODAY;
                 loadGoalsIntoCards();
-//                recreate();
+            }break;
+            case R.id.nav_statistics: {
+                Intent intent = new Intent(this, StatisticsActivity.class);
+                startActivity(intent);
             }break;
             case R.id.nav_all: {
                 currentFilter = FILTER_ALL;
                 loadGoalsIntoCards();
-//                recreate();
             }break;
         }
         return true;

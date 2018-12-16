@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -56,7 +57,7 @@ public class ApplicationPreferencesFragment extends PreferenceFragmentCompat imp
         db = AppDatabase.getDatabase(getContext());
         queue = Volley.newRequestQueue(getContext());
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-        sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity().getApplicationContext());
         alarmManager = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
 
         notifications.setOnPreferenceClickListener(this);
