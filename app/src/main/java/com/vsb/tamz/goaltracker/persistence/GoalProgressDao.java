@@ -34,4 +34,7 @@ public interface GoalProgressDao {
 
     @Query("SELECT COUNT(*) FROM GoalProgress WHERE goal_id = :goalId")
     long getCountByGoalId(long goalId);
+
+    @Query("SELECT COUNT(*) FROM GoalProgress")
+    long getGoalProgressCount();
 }

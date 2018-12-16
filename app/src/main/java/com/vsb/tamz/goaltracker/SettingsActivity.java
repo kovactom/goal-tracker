@@ -14,5 +14,6 @@ public class SettingsActivity extends AppCompatActivity {
                 .beginTransaction()
                 .add(android.R.id.content, new ApplicationPreferencesFragment())
                 .commit();
+
     }
 }

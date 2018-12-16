@@ -4,16 +4,20 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.model.GoalNotification;
+import com.vsb.tamz.goaltracker.persistence.repository.GoalRepository;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,7 +30,9 @@ public class GoalDetailActivity extends AppCompatActivity {
 
     private AlarmManager alarmManager;
     private AppDatabase db;
+    private GoalRepository goalRepository;
     private Toolbar toolbar;
+    private ImageView goalPicture;
     private TextView goalName;
     private TextView goalCategory;
     private TextView goalLocation;
@@ -47,6 +53,7 @@ public class GoalDetailActivity extends AppCompatActivity {
         alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 
         toolbar = findViewById(R.id.toolbarGoalDetail);
+        goalPicture = findViewById(R.id.goalDetailImage);
         goalName = findViewById(R.id.goalDetailName);
         goalCategory = findViewById(R.id.goalDetailCategory);
         goalLocation = findViewById(R.id.goalDetailLocation);
@@ -59,6 +66,7 @@ public class GoalDetailActivity extends AppCompatActivity {
         goalNotification = findViewById(R.id.goalDetailNotification);
 
         db = AppDatabase.getDatabase(this);
+        goalRepository = new GoalRepository(getApplication());
 
         Intent intent = getIntent();
         long goalId = intent.getLongExtra("goalId", 0);
@@ -77,7 +85,7 @@ public class GoalDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode) {
             case EDIT_REQUEST_CODE: {
-                cancelNotifications();
+//                cancelNotifications();
                 recreate();
             }break;
         }
@@ -85,8 +93,8 @@ public class GoalDetailActivity extends AppCompatActivity {
     }
 
     public void delete(MenuItem item) {
-        db.goalDao().delete(goal);
         cancelNotifications();
+        goalRepository.delete(goal);
         finish();
     }
 
@@ -105,12 +113,13 @@ public class GoalDetailActivity extends AppCompatActivity {
     }
 
     private void cancelNotifications() {
-        for (GregorianCalendar day : goal.generateGoalDays()) {
+        for (GoalNotification goalNotification : db.goalNotificationDao().findAllByGoalId(goal.getId())) {
             Intent intent = new Intent(getApplicationContext(), GoalNotificationBroadcaster.class);
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) (goal.getId() * 1_000_0000 + day.get(Calendar.DAY_OF_YEAR)), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) goalNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.cancel(alarmIntent);
         }
+        db.goalNotificationDao().deleteByGoalId(goal.getId());
     }
 
     private void populateFromObject() {
@@ -120,6 +129,7 @@ public class GoalDetailActivity extends AppCompatActivity {
 
         DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
         DateFormat timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
+        goalPicture.setImageURI(Uri.parse(goal.getPicture()));
         goalName.setText(goal.getName());
         goalCategory.setText(categories[(int) goal.getCategoryId()]);
         goalLocation.setText(goal.getLocation());

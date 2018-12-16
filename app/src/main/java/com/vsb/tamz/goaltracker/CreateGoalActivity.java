@@ -8,9 +8,11 @@ import android.app.TimePickerDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,9 @@ import android.widget.Toast;
 
 import com.vsb.tamz.goaltracker.persistence.AppDatabase;
 import com.vsb.tamz.goaltracker.persistence.model.Goal;
+import com.vsb.tamz.goaltracker.persistence.model.GoalNotification;
+import com.vsb.tamz.goaltracker.persistence.repository.GoalNotificationRepository;
+import com.vsb.tamz.goaltracker.persistence.repository.GoalRepository;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,6 +51,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
 
     private AlarmManager alarmManager;
     private AppDatabase db;
+    private GoalRepository goalRepository;
     private Toolbar toolbar;
     private Spinner categorySpinner;
     private Spinner repeatSpinner;
@@ -60,6 +66,7 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     private Uri pictureSrc;
     private int currentOpenedDatePicker;
 
+    private SharedPreferences sharedPreferences;
     private Goal goal;
     private boolean isEdit;
 
@@ -82,6 +89,8 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
         pictureSrcText = findViewById(R.id.cg_picture);
 
         db = AppDatabase.getDatabase(this);
+        goalRepository = new GoalRepository(getApplication());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
 
         Intent intent = getIntent();
         isEdit = intent.getBooleanExtra("editMode", false);
@@ -254,17 +263,33 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void scheduleNotifications() {
-        for (GregorianCalendar day : goal.generateGoalDays()) {
+        for (GoalNotification goalNotification : db.goalNotificationDao().findAllByGoalId(goal.getId())) {
             Intent intent = new Intent(getApplicationContext(), GoalNotificationBroadcaster.class);
-            intent.putExtra("goalName", goal.getName());
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) (goal.getId() * 1_000_0000 + day.get(Calendar.DAY_OF_YEAR)), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) goalNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            alarmManager.set(AlarmManager.RTC_WAKEUP, day.getTimeInMillis(), alarmIntent);
+            alarmManager.cancel(alarmIntent);
+        }
+
+        db.goalNotificationDao().deleteByGoalId(goal.getId());
+
+        for (GregorianCalendar day : goal.generateGoalDays()) {
+            GoalNotification goalNotification = new GoalNotification();
+            goalNotification.setGoalId(goal.getId());
+            goalNotification.setDate(day.getTime());
+            long id = db.goalNotificationDao().insert(goalNotification);
+
+            if (sharedPreferences.getBoolean(getString(R.string.sp_enable_notifications), false))  {
+                Intent intent = new Intent(getApplicationContext(), GoalNotificationBroadcaster.class);
+                intent.putExtra("goalName", goal.getName());
+                PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP, day.getTimeInMillis(), alarmIntent);
+            }
         }
     }
 
     public void save(MenuItem item) {
-
+        long goalId = goal.getId();
         try {
             goal.setName(nameText.getText().toString());
             goal.setLocation(locationText.getText().toString());
@@ -275,10 +300,11 @@ public class CreateGoalActivity extends AppCompatActivity implements View.OnClic
             goal.setRepeatId(repeatSpinner.getSelectedItemId());
             goal.setNotificationId(notificationSpinner.getSelectedItemId());
             goal.setDuration(Long.parseLong(durationText.getText().toString()));
-            goal.setPicture(pictureSrc != null ? pictureSrc.toString() : null);
+            goal.setPicture(pictureSrc != null ? pictureSrc.toString() : pictureSrcText.getText().toString());
 
-            if (isEdit) db.goalDao().update(goal);
-            else db.goalDao().insert(goal);
+            if (isEdit) goalRepository.update(goal);
+            else goalId = db.goalDao().insert(goal);
+            goal.setId(goalId);
         } catch (ParseException e) {
             e.printStackTrace();
         }

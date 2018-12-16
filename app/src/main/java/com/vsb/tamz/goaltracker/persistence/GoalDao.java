@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface GoalDao {
     @Insert
-    void insert(Goal goal);
+    long insert(Goal goal);
 
     @Update
     void update(Goal goal);
@@ -26,4 +26,7 @@ public interface GoalDao {
 
     @Query("SELECT * FROM goal")
     List<Goal> findAll();
+
+    @Query("SELECT COUNT(*) FROM goal")
+    long getGoalCount();
 }

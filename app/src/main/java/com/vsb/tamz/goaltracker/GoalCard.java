@@ -6,14 +6,16 @@ public class GoalCard {
     private String repeat;
     private String duration;
     private String score;
+    private String picture;
     private boolean active;
 
-    public GoalCard(long id, String name, String repeat, String duration, String score, boolean active) {
+    public GoalCard(long id, String name, String repeat, String duration, String score, String picture, boolean active) {
         this.id = id;
         this.name = name;
         this.repeat = repeat;
         this.duration = duration;
         this.score = score;
+        this.picture = picture;
         this.active = active;
     }
 
@@ -63,5 +65,13 @@ public class GoalCard {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }
